@@ -2,13 +2,15 @@
 
 namespace Dniccum\NovaDocumentation;
 
-use Dniccum\NovaDocumentation\Library\Contracts\DocumentationPage;
-use Dniccum\NovaDocumentation\Library\MarkdownUtility;
-use Illuminate\Support\Facades\Route;
+
 use Laravel\Nova\Nova;
+use Illuminate\Support\Str;
 use Laravel\Nova\Events\ServingNova;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Dniccum\NovaDocumentation\Library\MarkdownUtility;
 use Dniccum\NovaDocumentation\Http\Middleware\Authorize;
+use Dniccum\NovaDocumentation\Library\Contracts\DocumentationPage;
 
 class ToolServiceProvider extends ServiceProvider
 {
@@ -43,8 +45,8 @@ class ToolServiceProvider extends ServiceProvider
         $this->utility = new MarkdownUtility();
         $this->pageRoutes = $this->utility->buildPageRoutes();
 
-        $this->loadViewsFrom(__DIR__.'/../resources/views', $this->namespace);
-        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', $this->namespace);
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', $this->namespace);
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', $this->namespace);
 
         $this->app->booted(function () {
             $this->routes();
@@ -60,17 +62,17 @@ class ToolServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/../config/'.$this->config.'.php' => base_path('config/'.$this->config.'.php'),
+                __DIR__ . '/../config/' . $this->config . '.php' => base_path('config/' . $this->config . '.php'),
             ], 'config');
         }
 
         $this->publishes([
-            __DIR__.'/../resources/documentation/home.md' => resource_path('documentation/home.md'),
-            __DIR__.'/../resources/documentation/sample.md' => resource_path('documentation/sample.md'),
+            __DIR__ . '/../resources/documentation/home.md' => resource_path('documentation/home.md'),
+            __DIR__ . '/../resources/documentation/sample.md' => resource_path('documentation/sample.md'),
         ]);
 
         $this->publishes([
-            __DIR__.'/../resources/lang' => resource_path('lang/vendor/'.$this->namespace),
+            __DIR__ . '/../resources/lang' => resource_path('lang/vendor/' . $this->namespace),
         ], 'lang');
     }
 
@@ -86,8 +88,8 @@ class ToolServiceProvider extends ServiceProvider
         }
 
         Nova::router(['nova', Authorize::class])
-            ->prefix(\Str::finish(config('nova.path'), '/').$this->prefix)
-            ->group(__DIR__.'/../routes/inertia.php');
+            ->prefix(Str::finish(config('nova.path'), '/') . $this->prefix)
+            ->group(__DIR__ . '/../routes/inertia.php');
     }
 
     /**
@@ -97,6 +99,6 @@ class ToolServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/'.$this->config.'.php', $this->config);
+        $this->mergeConfigFrom(__DIR__ . '/../config/' . $this->config . '.php', $this->config);
     }
 }
